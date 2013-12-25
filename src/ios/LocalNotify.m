@@ -79,4 +79,7 @@
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
 }
 
+- (void)pluginInitialize {
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
+}
 @end
