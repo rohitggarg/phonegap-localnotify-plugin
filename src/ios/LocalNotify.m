@@ -67,17 +67,12 @@
   UIApplicationState state = [[UIApplication sharedApplication] applicationState];
   NSString* stateStr = (state == UIApplicationStateActive ? @"foreground" : @"background");
 
-  CDVPluginResult* pluginResult = nil;
-  NSString* javaScript          = nil;
-
   NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
   [params setObject:stateStr forKey:@"appState"];
   [params setObject:[note.userInfo objectForKey:@"notificationId"] forKey:@"notificationId"];
 
-  pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK  messageAsDictionary:params];
-  javaScript   = [pluginResult toSuccessCallbackString: [note.userInfo objectForKey:@"callbackId"]];
-
-  [self writeJavascript:javaScript];
+  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:params] callbackId:[note.userInfo objectForKey:@"callbackId"]];
+  
 }
 - (void)setBadgeNumber:(CDVInvokedUrlCommand*) command {
   int badgeNumber = [[command.arguments objectAtIndex:0] intValue];
