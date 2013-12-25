@@ -1,93 +1,92 @@
 package com.pluggers.plugins.localnotify;
 
+import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+
+import android.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import com.phonegap.api.Plugin;
-import com.phonegap.api.PluginResult;
-import org.json.JSONArray;
+import android.net.Uri;
 
-public class LocalNotify extends Plugin {
+public class LocalNotify extends CordovaPlugin {
+    private static String appState = "foreground";
 
-    final int notif_ID = 1234;
     NotificationManager notificationManager;
     Notification note;
     PendingIntent contentIntent;
 
     @Override
-    public PluginResult execute(String action, JSONArray args, String callbackId)
+    public boolean execute(String action, JSONArray args, CallbackContext context)
     {
         PluginResult.Status status = PluginResult.Status.OK;
-        String result = "";
-
+        notificationManager = (NotificationManager) this.cordova.getActivity().getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        JSONObject result = new JSONObject();
+       
         try {
             if (action.equals("notice")) {
-                this.createStatusBarNotification(args.getString(0), args.getString(1), args.getString(2));
+                this.createStatusBarNotification(args.getLong(0), args.getString(1), args.getString(2), args.getString(3), args.getString(4), args.getString(5), args.getInt(6));
+                result.put("appState", appState);
+                context.sendPluginResult(new PluginResult(status, result));
+            } else if (action.equals("cancel")) {
+                this.cancelNotification(args.getString(0));
+                context.sendPluginResult(new PluginResult(status, result));
+            } else if(action.equals("setBadgeNumber") && this.note != null) {
+                note.number = args.getInt(0);
+            } else if(action.equals("cancelAll")) {
+                notificationManager.cancelAll();
+                context.sendPluginResult(new PluginResult(status, result));
             }
-            else if (action.equals("updateNotification")) {
-                this.updateNotification(args.getString(0), args.getString(1), args.getInt(2));
-            }
-            else if (action.equals("cancelNotification")) {
-                this.cancelNotification();
-            }
-            else if (action.equals("showTickerText")) {
-                this.showTickerText(args.getString(0));
-            }
-            return new PluginResult(status, result);
+            return true;
         } catch(JSONException e) {
-            return new PluginResult(PluginResult.Status.JSON_EXCEPTION);
+            context.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION));
+            return false;
         }
     }
 
-    private void updateNotification(String contentTitle, String contentText, int number)
+    private void createStatusBarNotification(Long fireDate, String contentText, String action, String repeatInterval, String soundName, String notificationId, Integer badge)
     {
-        note.setLatestEventInfo(this.ctx, contentTitle, contentText, contentIntent);
-        note.number = number;
-        notificationManager.notify(notif_ID,note);
-    }
-
-    private void createStatusBarNotification(Long fireDate, String contentTitle, String contentText, String tickerText)
-    {
-        notificationManager = (NotificationManager) this.ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-        note = new Notification(android.R.drawable.btn_star_big_on, tickerText, System.currentTimeMillis() );
-        //change the icon
+        Context ctx = this.cordova.getActivity().getApplicationContext();
+        Intent notificationIntent = new Intent(ctx, this.cordova.getActivity().getClass());
         
-        Intent notificationIntent = new Intent(this.ctx, myActivityClass.class);
         notificationIntent.setAction(Intent.ACTION_MAIN);
         notificationIntent = notificationIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        contentIntent = PendingIntent.getActivity(this.ctx, 0, notificationIntent, 0);
+        contentIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
 
-        note.setLatestEventInfo(this.ctx, contentTitle, contentText, contentIntent);
+        note = new Notification.Builder(ctx).setContentTitle(ctx.getApplicationInfo().name)
+                        .setContentText(contentText)
+                        .setSmallIcon(R.drawable.btn_star_big_on)
+                        .setContentIntent(contentIntent)
+                        .setAutoCancel(true)
+                        .setSound(soundName!=null?Uri.parse(soundName):null)
+                        .addAction(R.drawable.btn_default, action, contentIntent)
+                        .setNumber(badge)
+                        .setWhen(fireDate)
+                        .build();
 
-        note.number = 1;  //Just created notification so number=1. Remove this line if you dont want numbers
-
-        notificationManager.notify(notif_ID,note);
+        notificationManager.notify(notificationId,0,note);
     }
 
-    private void cancelNotification()
+    private void cancelNotification(String notificationId)
     {
-        notificationManager.cancel(notif_ID);
-    }
-
-    private void showTickerText(String tickerText)
-    {
-        note.tickerText = tickerText;
-        notificationManager.notify(notif_ID,note);
-    }
-
-    @Override
-    public void onPause()
-    {
-        super.webView.loadUrl("javascript:navigator.systemNotification.onBackground();");
+        notificationManager.cancel(notificationId,0);
     }
 
     @Override
-    public void onResume()
+    public void onPause(boolean pause)
     {
-        super.webView.loadUrl("javascript:navigator.systemNotification.onForeground();");
+        appState = "background";
+    }
+
+    @Override
+    public void onResume(boolean resume)
+    {
+        appState = "foreground";
     }
 }
