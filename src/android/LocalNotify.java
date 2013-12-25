@@ -59,7 +59,7 @@ public class LocalNotify extends CordovaPlugin {
         notificationIntent = notificationIntent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
         contentIntent = PendingIntent.getActivity(ctx, 0, notificationIntent, 0);
 
-        note = new Notification.Builder(ctx).setContentTitle(ctx.getApplicationInfo().name)
+        note = new Notification.Builder(ctx).setContentTitle(ctx.getString(ctx.getApplicationInfo().labelRes))
                         .setContentText(contentText)
                         .setSmallIcon(R.drawable.btn_star_big_on)
                         .setContentIntent(contentIntent)
