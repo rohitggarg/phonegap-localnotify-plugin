@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin 
+  xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+  xmlns:android="http://schemas.android.com/apk/res/android" 
+  id="com.pluggers.plugins.localnotify" 
+  version="0.1">
+  <name>LocalNotify</name>
+  <description>This plugin control local notifications.</description>
+  <license>Apache 2.0</license>
+  <keywords>cordova,notification,local</keywords>
+  <repo>https://github.com/rohitggarg/phonegap-localnotify-plugin.git</repo>
+  <engines>
+    <engine name="cordova" version=">=3.0.0" />
+  </engines>
+
+  <js-module src="www/local-notify.js" name="localnotify">
+    <clobbers target="localnotify" />
+  </js-module>
+
+  <platform name="ios">
+
+    <config-file target="config.xml" parent="/*">
+      <feature name="LocalNotify">
+        <param name="ios-package" value="LocalNotify" />
+      </feature>
+    </config-file>
+
+    <header-file src="src/ios/LocalNotify.h" />
+    <source-file src="src/ios/LocalNotify.m" />
+
+  </platform>
+
+  <platform name="android">
+    <config-file target="res/xml/config.xml" parent="/*">
+      <feature name="LocalNotify" >
+        <param name="android-package" value="com.pluggers.plugins.localnotify.LocalNotify"/>
+      </feature>
+    </config-file>
+
+    <source-file src="src/android/LocalNotify.java" target-dir="src/com/pluggers/plugins/localnotify" />
+  </platform>
+</plugin>
