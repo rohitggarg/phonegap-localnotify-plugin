@@ -32,7 +32,7 @@ LocalNotify.prototype.add = function(options) {
     "LocalNotify", 
     "notice", 
     [
-      defaults.fireDate,
+      defaults.fireTimestamp,
       defaults.alertBody,
       defaults.action,
       defaults.repeatInterval,

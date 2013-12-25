@@ -4,9 +4,9 @@
 
 @implementation LocalNotify
 
--(void)notify:(CDVInvokedUrlCommand*)command {
+-(void)notice:(CDVInvokedUrlCommand*)command {
 
-  NSMutableDictionary *repeatDict = [NSMutableDictionary init]; 
+  NSMutableDictionary *repeatDict = [[NSMutableDictionary alloc ]init];
   [repeatDict setObject:[NSNumber numberWithInt:NSSecondCalendarUnit] forKey:@"second"];
   [repeatDict setObject:[NSNumber numberWithInt:NSMinuteCalendarUnit] forKey:@"minute"];
   [repeatDict setObject:[NSNumber numberWithInt:NSHourCalendarUnit] forKey:@"hourly"];
