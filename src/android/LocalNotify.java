@@ -79,13 +79,13 @@ public class LocalNotify extends CordovaPlugin {
     }
 
     @Override
-    public void onPause(boolean pause)
+    public void onPause(boolean multitasking)
     {
         appState = "background";
     }
 
     @Override
-    public void onResume(boolean resume)
+    public void onResume(boolean multitasking)
     {
         appState = "foreground";
     }
