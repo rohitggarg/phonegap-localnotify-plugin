@@ -79,6 +79,9 @@
 
   [self writeJavascript:javaScript];
 }
-
+- (void)setBadgeNumber:(CDVInvokedUrlCommand*) command {
+  int badgeNumber = [[command.arguments objectAtIndex:0] intValue];
+  [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
+}
 
 @end

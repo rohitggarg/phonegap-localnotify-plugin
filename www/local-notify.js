@@ -43,6 +43,9 @@ LocalNotify.prototype.add = function(options) {
   );
 };
 
+LocalNotify.prototype.badgeNumber = function(value) {
+  cordova.exec(null, null, "LocalNotify", "setBadgeNumber", [value]);
+}
 LocalNotify.prototype.cancel =  function(str, callback) {
   cordova.exec(callback, null, "LocalNotify", "cancel", [str]);
 };
