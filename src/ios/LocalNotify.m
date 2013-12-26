@@ -35,14 +35,15 @@
   note.timeZone          = [NSTimeZone defaultTimeZone];
   note.applicationIconBadgeNumber = badge;
 
-  NSDictionary *userDict = [NSDictionary dictionaryWithObjectsAndKeys:
-    notificationId, @"notificationId",
-    command.callbackId, @"callbackId",
-    nil
-  ];
-
-  note.userInfo = userDict;
   [[UIApplication sharedApplication] scheduleLocalNotification:note];
+  UIApplicationState state = [[UIApplication sharedApplication] applicationState];
+  NSString* stateStr = (state == UIApplicationStateActive ? @"foreground" : @"background");
+
+  NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+  [params setObject:stateStr forKey:@"appState"];
+  [params setObject:notificationId forKey:@"notificationId"];
+
+  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:params] callbackId:command.callbackId];
 }
 
 - (void)cancel:(CDVInvokedUrlCommand*)command {
@@ -55,31 +56,16 @@
       [[UIApplication sharedApplication] cancelLocalNotification: notification];
     }
   }
+  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:nil] callbackId:command.callbackId];
 }
 
 - (void)cancelAll:(CDVInvokedUrlCommand*)command {
   [[UIApplication sharedApplication] cancelAllLocalNotifications];
+  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:nil] callbackId:command.callbackId];
 }
 
-- (void)didReceiveLocalNotification:(NSNotification *)notification
-{
-  UILocalNotification* note  = [notification object];
-  UIApplicationState state = [[UIApplication sharedApplication] applicationState];
-  NSString* stateStr = (state == UIApplicationStateActive ? @"foreground" : @"background");
-
-  NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
-  [params setObject:stateStr forKey:@"appState"];
-  [params setObject:[note.userInfo objectForKey:@"notificationId"] forKey:@"notificationId"];
-
-  [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:params] callbackId:[note.userInfo objectForKey:@"callbackId"]];
-  
-}
 - (void)setBadgeNumber:(CDVInvokedUrlCommand*) command {
   int badgeNumber = [[command.arguments objectAtIndex:0] intValue];
   [[UIApplication sharedApplication] setApplicationIconBadgeNumber:badgeNumber];
-}
-
-- (void)pluginInitialize {
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didReceiveLocalNotification:) name:CDVLocalNotification object:nil];
 }
 @end
