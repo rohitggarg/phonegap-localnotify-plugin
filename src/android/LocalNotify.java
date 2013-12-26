@@ -33,7 +33,7 @@ public class LocalNotify extends CordovaPlugin {
             if (action.equals("notice")) {
                 this.createStatusBarNotification(args.getLong(0), args.getString(1), args.getString(2), args.getString(3), args.getString(4), args.getString(5), args.getInt(6));
                 result.put("appState", appState);
-                result.put("notificationId", notificationId);
+                result.put("notificationId", args.getString(5));
                 context.sendPluginResult(new PluginResult(status, result));
             } else if (action.equals("cancel")) {
                 this.cancelNotification(args.getString(0));
