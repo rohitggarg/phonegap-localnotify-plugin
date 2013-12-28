@@ -1,4 +1,4 @@
-package android;
+package com.pluggers.plugins.localnotify;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;

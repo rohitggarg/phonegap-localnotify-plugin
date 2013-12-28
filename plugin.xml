@@ -37,6 +37,6 @@
       </feature>
     </config-file>
 
-    <source-file src="src/android/LocalNotify.java" target-dir="src/com/pluggers/plugins/localnotify" />
+    <source-file src="src/android/com/pluggers/plugins/localnotify/LocalNotify.java" target-dir="src/com/pluggers/plugins/localnotify" />
   </platform>
 </plugin>
