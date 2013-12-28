@@ -1,4 +1,4 @@
-package com.pluggers.plugins.localnotify;
+package android;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -66,10 +66,9 @@ public class LocalNotify extends CordovaPlugin {
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true)
                         .setSound(soundName!=null?Uri.parse(soundName):null)
-                        .addAction(R.drawable.btn_default, action, contentIntent)
                         .setNumber(badge)
                         .setWhen(fireDate)
-                        .build();
+                        .getNotification();
 
         notificationManager.notify(notificationId,0,note);
     }
